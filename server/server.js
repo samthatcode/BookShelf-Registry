@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const apiRoutes = require('./routes/api/UserRoute');
+
 
 const { connection } = require('./config/connection');
 
@@ -22,8 +24,7 @@ if (process.env.NODE_ENV === 'production') {
 
 
 // Routes
-// const routes = readdirSync('./routes').map((route) => require(`./routes/${route}`));
-// app.use('/api/v1', routes);
+app.use('/api/v1', apiRoutes);
 
 // Start server
 const startServer = async () => {
