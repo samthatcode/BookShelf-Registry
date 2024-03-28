@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { FaSpinner } from "react-icons/fa"; 
+import { FaSpinner } from "react-icons/fa";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -25,7 +25,8 @@ function App() {
 
         // Exchange the received code for an access token on the server
         const tokenResponse = await axios.get(
-          `http://localhost:3000/oauth2callback?code=${codeResponse.code}`
+          `https://bookshelf-registry-backend-server.onrender.com/oauth2callback?code=${codeResponse.code}`
+          // `http://localhost:3000/oauth2callback?code=${codeResponse.code}`
         );
         console.log("Access Token:", tokenResponse.data.access_token);
       } catch (error) {
@@ -78,7 +79,8 @@ function App() {
 
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/searchAll/${searchQuery}/0`
+           `https://bookshelf-registry-backend-server.onrender.com/api/v1/searchAll/${searchQuery}/0`
+          // `http://localhost:3000/api/v1/searchAll/${searchQuery}/0`
         );
         setBooks(response.data.data);
         setTotalResults(response.data.total);
@@ -91,16 +93,16 @@ function App() {
     };
 
     useEffect(() => {
-      // Focus on the input field after each render
       if (inputRef.current) {
         inputRef.current.focus();
       }
-    });
+    }, [searchQuery]); // Add searchQuery as a dependency to re-focus when it changes
 
     return (
       <div>
-        <form onSubmit={handleSearch} className={`mb-4`}>
+        <form onSubmit={handleSearch} className={`mt-20`}>
           <input
+            ref={inputRef}
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -115,9 +117,12 @@ function App() {
             {searching ? "Searching..." : "Search"}
           </button>
         </form>
-        {loading && <FaSpinner className={`animate-spin flex justify-center items-center`}
-        size={40}
-        />}
+        {loading && (
+          <FaSpinner
+            className={`animate-spin flex justify-center items-center`}
+            size={40}
+          />
+        )}
 
         {books ? (
           <div>
@@ -125,6 +130,13 @@ function App() {
             <div className={`grid grid-cols-2 md:grid-cols-4 gap-4`}>
               {books.map((book) => (
                 <div key={book.id} className={`border p-4 rounded`}>
+                  {book.volumeInfo.imageLinks && (
+                    <img
+                      src={book.volumeInfo.imageLinks.thumbnail}
+                      alt={book.volumeInfo.title}
+                      className={`w-full h-auto mb-4 rounded`}
+                    />
+                  )}
                   <h3 className={`font-bold text-lg mb-2`}>
                     {book.volumeInfo.title}
                   </h3>
@@ -153,14 +165,14 @@ function App() {
             </div>
           </div>
         ) : (
-          <p>No books found</p>
+          <p className={`text-center text-2xl`}>No books found</p>
         )}
       </div>
     );
   };
 
   return (
-    <div className={`min-h-screen bg-gray-100 flex direction-row`}>
+    <div className={`md:min-h-screen bg-gray-100 text-center md:flex-row flex-col`}>
       <div className={`bg-white p-8 rounded shadow-lg`}>
         <h2 className={`text-2xl font-bold mb-4`}>React Google Login</h2>
 

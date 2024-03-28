@@ -21,8 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
     cors({
-        // origin: ["https://kalles-frontend.onrender.com", "https://kalles-backed.onrender.com"],
-        origin: ["http://localhost:5173", "http://localhost:3000"],
+        origin: ["https://bookshelf-registry.onrender.com", "https://bookshelf-registry-backend-server.onrender.com"],
+        // origin: ["http://localhost:5173", "http://localhost:3000"],
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     })
@@ -32,7 +32,9 @@ app.use(
 const oauth2Client = new OAuth2Client(
     CLIENT_ID,
     CLIENT_SECRET,
-    'http://localhost:3000/oauth2callback'
+    // `http://localhost:3000/oauth2callback`
+    `https://bookshelf-registry-backend-server.onrender.com/oauth2callback`
+
 );
 
 // Redirect users to Google OAuth authentication
@@ -82,21 +84,21 @@ app.use('/api/v1', apiRoute);
 
 
 // if we're in production, serve client/build as static assets
-// if (process.env.NODE_ENV === 'production') {
-//     app.use(express.static(path.join(__dirname, '../client/build')));
-// }
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+}
 
-// app.get('/term-of-use', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/term-of-use.html'));
-// });
+app.get('/term-of-use', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/term-of-use.html'));
+});
 
-// app.get('/privacy-policy', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/privacy-policy.html'));
-// });
+app.get('/privacy-policy', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/privacy-policy.html'));
+});
 
-// app.get('*', function(req, res) {
-//   res.sendFile('index.html', {root: path.join(__dirname, '../client/build')}); 
-// });
+app.get('*', function(req, res) {
+  res.sendFile('index.html', {root: path.join(__dirname, '../client/build')}); 
+});
 
 
 // Start server
